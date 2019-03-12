@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'inshack',
         'USER': os.getenv('db_user', 'inshack'),
-        'PASSWORD': os.getenv('db_password', 'root'),
+        'PASSWORD': os.getenv('db_password', 'password'),
         'HOST': os.getenv('db_host', 'localhost'),
         'PORT': '3306',
         'OPTIONS': {
@@ -141,7 +141,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
-STATIC_ROOT = "/srv/web/static"
+STATIC_ROOT = "/var/www/inshack-static/static/"
 STATIC_URL = '/static/'
 LOGIN_URL = '/team/login/'
 

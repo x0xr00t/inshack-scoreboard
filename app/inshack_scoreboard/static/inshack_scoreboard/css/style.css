@@ -82,3 +82,7 @@ th, td{vertical-align: middle !important;}
 }
 
 .hover { background-color: #eee; }
+
+.rule {
+    margin-bottom: 0.25em;
+}

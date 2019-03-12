@@ -1,3 +1,4 @@
+import logging
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpRequest
@@ -7,12 +8,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_http_methods, logger
+from django.views.decorators.http import require_http_methods
 from news.forms import NewsForm
 from news.models import News
 
 from user_manager.models import TeamProfile
 
+logger = logging.getLogger(__name__)
+logger.setLevel(0)
 
 @require_http_methods(["GET"])
 def news(request: HttpRequest) -> HttpResponse:

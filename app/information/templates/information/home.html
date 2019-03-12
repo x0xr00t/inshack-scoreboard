@@ -1,20 +1,20 @@
 {% extends "inshack_scoreboard/layout.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block title %}{{ block.super }} | Home{% endblock %}
 {% block home_active %}active{% endblock %}
 
 {% block body %}
-    <h1>INS'HACK</h1>
+    <h1>INS'HACK 2019</h1>
     <hr>
     <h2>TL;DR</h2>
     <div class="card card-block">
         <p class="card-text">
             Classic Jeopardy style CTF, from <a
-                href="https://www.timeanddate.com/worldclock/converter.html?iso=20180405T163000&p1=333&p2=1440&p3=179&p4=224&p5=237&p6=438&p7=240"
-                target="_blank">05 Apr</a> to <a
-                href="https://www.timeanddate.com/worldclock/converter.html?iso=20180408T163000&p1=333&p2=1440&p3=179&p4=224&p5=237&p6=438&p7=240"
-                target="_blank">08 Apr</a> 2018.
+                href="https://www.timeanddate.com/worldclock/converter.html?iso=20190502T173000&p1=195"
+                target="_blank">02 May</a> to <a
+                href="https://www.timeanddate.com/worldclock/converter.html?iso=20190505T173000&p1=195"
+                target="_blank">05 May</a> 2019.
         </p>
     </div>
     <hr>
@@ -42,16 +42,16 @@
                 <div class="flex-row" style="position:absolute;bottom:10px;">
                     {#                https://www.timeanddate.com/worldclock/converter.htm#}
                     <a class="card-link btn btn-sm btn-default" target="_blank"
-                       href="https://www.timeanddate.com/worldclock/converter.html?iso=20180405T163000&p1=333&p2=1440&p3=179&p4=224&p5=237&p6=438&p7=240">
-                        <time datetime="2018-04-05 18:30">Start time</time>
+                       href="https://www.timeanddate.com/worldclock/converter.html?iso=20190502T173000&p1=195">
+                        <time datetime="2019-05-02 19:30">Start time</time>
                     </a>
                     <a class="card-link btn btn-sm btn-default" target="_blank"
-                       href="https://www.timeanddate.com/worldclock/converter.html?iso=20180405T220000&p1=333&p2=1440&p3=179&p4=224&p5=237&p6=438&p7=240">
-                        <time datetime="2018-04-05 23:59">End on site</time>
+                       href="https://www.timeanddate.com/worldclock/converter.html?iso=20190502T220000&p1=195">
+                        <time datetime="2019-05-02 23:59">End on site</time>
                     </a>
                     <a class="card-link btn btn-sm btn-default" target="_blank"
-                       href="https://www.timeanddate.com/worldclock/converter.html?iso=20180408T163000&p1=333&p2=1440&p3=179&p4=224&p5=237&p6=438&p7=240">
-                        <time datetime="2018-04-06 18:30">End online</time>
+                       href="https://www.timeanddate.com/worldclock/converter.html?iso=20190505T173000&p1=195">
+                        <time datetime="2019-05-05 19:30">End online</time>
                     </a>
                 </div>
             </div>
@@ -101,10 +101,10 @@
     <h2 id="rules">Rules</h2>
     <div class="card card-block">
         <ol>
-            <li>
+            <li class="rule">
                 It will be a <b>Jeopardy</b>-style CTF.
             </li>
-            <li>
+            <li class="rule">
                 Players may never: <br>
                   - flood or spam the Telegram chatroom.<br>
                   - destroy flags or prevent other players from accessing them.<br>
@@ -113,38 +113,38 @@
                 teams.<br>
                 Note that any infraction to the previous rules may result to <b>disqualification</b>.
             </li>
-            <li>
+            <li class="rule">
                 There will be on-site-only challenges. These challenges will not award CTF points.
             </li>
-            <li>
+            <li class="rule">
                 Any degradation of service may result in <b>disqualification</b>, please do not use automated tools as
                 dirbuster or sqlmap which would increase the network traffic. Note that we might have some mitigation
                 against those tools.
             </li>
-            <li>
+            <li class="rule">
                 Players are awarded points by capturing flags. These flags must be entered into the respective
                 locations. If a flag is correct, points will be awarded automatically by the system. If you have
                 captured a flag and the system is not accepting your answer, please notify us via Telegram. Note that because
                 of web caching, you might not see your points right away, please be patient.
             </li>
-            <li>
+            <li class="rule">
                 Bugbounty points will be given to any team finding a security bug in the infrastructure as
                 long as the team did not disrupt the challenge and immediately reported it to an admin with full details. The
                 number of points (if any) given to the team will be <b>entirely decided by the admins</b> (based on the
                 bug impact and the team's actions regarding this bug).
             </li>
-            <li>
+            <li class="rule">
                 Players should remain respectful to all other CTF players in the chatroom. A warning will be given if an
                 admin deems a player’s behavior in the chatroom to be inappropriate. If the player’s inappropriate
                 behavior persists after the warning, the player will be banned and disqualified from the competition.
             </li>
-            <li>
+            <li class="rule">
                 CTF admins and challenges writers will not play in the CTF. They are only allowed to provide support.
             </li>
-            <li>
+            <li class="rule">
                 Flag format is <code>INSA{...}</code>
             </li>
-            <li>
+            <li class="rule">
                 The number of points given for a solved challenge is dynamic. If the challenge is flagged a lot of times its number of points will decrease (in a linear fashion).
             </li>
             <li>

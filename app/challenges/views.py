@@ -2,6 +2,7 @@ import json
 from _sha256 import sha256
 from datetime import datetime
 
+import logging
 import requests
 from challenges.models import Challenge, CTFSettings, TeamFlagChall
 from django.contrib import messages
@@ -15,7 +16,7 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_http_methods, logger
+from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from news.forms import NewsForm
 from news.models import News
@@ -23,8 +24,8 @@ from user_manager.models import TeamProfile
 
 from challenges.forms import ChallengeForm
 
+logger = logging.getLogger(__name__)
 logger.setLevel(0)
-
 
 def create_or_update_challenge(request, chall_form, creating):
     if chall_form.is_valid():
