@@ -96,8 +96,8 @@ class Challenge(models.Model):
     is_enabled = models.BooleanField(default=False)
     # file (or archive) of the chall
     chall_file = models.URLField(blank=True, null=True)
-    # is the chall written by OVH? (TODO: generalize if other companies want to contribute too)
-    is_ovh_chall = models.BooleanField(default=False)
+    # is the chall written by a company?
+    company_logo_url = models.URLField(blank=True, null=True)
     # if > -3, will override the automagic points calculus
     nb_points_override = models.IntegerField(blank=False, null=False, default=-10)
 

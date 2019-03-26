@@ -6,7 +6,7 @@ from challenges.models import Challenge
 class ChallengeForm(forms.ModelForm):
     class Meta:
         model = Challenge
-        fields = ['name', 'description', 'category', 'difficulty', 'flag', 'chall_file', 'is_enabled', 'is_ovh_chall', 'nb_points_override']
+        fields = ['name', 'description', 'category', 'difficulty', 'flag', 'chall_file', 'is_enabled', 'company_logo_url', 'nb_points_override']
 
     def __init__(self, *args, **kwargs):
         super(ChallengeForm, self).__init__(*args, **kwargs)
@@ -45,8 +45,12 @@ class ChallengeForm(forms.ModelForm):
             'class': 'form-control validate',
         })
 
+        self.fields['company_logo_url'].label = '(opt) Company logo URL'
+        self.fields['company_logo_url'].widget.attrs.update({
+            'class': 'form-control validate',
+        })
+
         self.fields['is_enabled'].label = 'Put online now ?'
-        self.fields['is_ovh_chall'].label = 'Is this a challenge from OVH?'
 
 
 class SubmitionForm(forms.Form):
