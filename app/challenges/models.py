@@ -1,4 +1,9 @@
+import datetime
+import json
+
+from django.core.validators import RegexValidator
 from django.db import models
+from django.utils import timezone
 
 from user_manager.models import TeamProfile
 
@@ -21,7 +26,8 @@ class CTFSettings(models.Model):
 
     local_scoreboard_saved = models.TextField(blank=True, null=True)
     global_scoreboard_saved = models.TextField(blank=True, null=True)
-    url_challenges_state = models.URLField()
+    challenges_states_json = models.TextField(blank=True, null=True)
+    challenges_states_updated_at = models.DateTimeField(default=timezone.now)
 
     @property
     def has_been_started(self):
@@ -34,6 +40,17 @@ class CTFSettings(models.Model):
     @property
     def should_use_saved_global_scoreboard(self):
         return self.state == self.ONLINE_END
+
+    @property
+    def challenges_states(self):
+        try:
+            challenges_states = json.loads(self.challenges_states_json)
+            if timezone.now() - self.challenges_states_updated_at < datetime.timedelta(minutes=15):
+                return challenges_states
+        except Exception:
+            pass
+
+        return {}
 
 
 class ChallengeManagerNoDisabled(models.Manager):
@@ -91,7 +108,12 @@ class Challenge(models.Model):
     flaggers = models.ManyToManyField(TeamProfile, through='TeamFlagChall', blank=True,
                                       related_name='validated_challenges')
     # chall's flag
-    flag = models.CharField(max_length=255)
+    flag = models.CharField(max_length=255, validators=[
+        RegexValidator(
+            regex=r'^INSA{.*}$',
+            message='Flag should be in the form ^INSA{.*}$',
+        ),
+    ])
     # is chall visible by everyone ?
     is_enabled = models.BooleanField(default=False)
     # file (or archive) of the chall

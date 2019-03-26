@@ -15,7 +15,11 @@ from news.models import News
 from user_manager.models import TeamProfile
 
 logger = logging.getLogger(__name__)
-logger.setLevel(0)
+logger.setLevel(logging.DEBUG)
+fh = logging.StreamHandler()
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
+
 
 @require_http_methods(["GET"])
 def news(request: HttpRequest) -> HttpResponse:

@@ -28,9 +28,11 @@ $ python3 manage.py migrate
 $ echo "from django.contrib.auth.models import User; \
 from challenges.models import CTFSettings; \
 User.objects.create_superuser('adminctf', 'me@gmail.com', 'CHANGE_ME'); \
-CTFSettings.objects.create(url_challenges_state='http://IP_OF_CHALLENGE_MONITORING/')
+CTFSettings.objects.create()
 " | python3 manage.py shell
 ```
+
+Once the superuser is created, go to the django admin interface and create a `teamprofile` for the superuser
 
 ## Run in development
 

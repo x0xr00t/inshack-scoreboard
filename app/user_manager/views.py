@@ -21,6 +21,10 @@ from inshack_scoreboard import settings
 from user_manager.forms import UserForm, TeamProfileForm, LoginForm
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+fh = logging.StreamHandler()
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
 
 
 def create_or_update_team(request: HttpRequest, team_form: UserForm, team_profile_form: TeamProfileForm, creating: bool) -> HttpResponse:

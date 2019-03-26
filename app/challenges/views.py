@@ -3,7 +3,10 @@ from _sha256 import sha256
 from datetime import datetime
 
 import logging
-import requests
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.utils import timezone
+
+from challenges.decorators import staff_member_required_basicauth
 from challenges.models import Challenge, CTFSettings, TeamFlagChall
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -25,17 +28,25 @@ from user_manager.models import TeamProfile
 from challenges.forms import ChallengeForm
 
 logger = logging.getLogger(__name__)
-logger.setLevel(0)
+logger.setLevel(logging.DEBUG)
+fh = logging.StreamHandler()
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
+
+
+def _get_slug(name):
+    chall_slug = slugify(name)
+    nb_same_slug = Challenge.all_objects.filter(slug=chall_slug).count()
+    if nb_same_slug != 0:
+        chall_slug += '-' + str(nb_same_slug)
+    return chall_slug
+
 
 def create_or_update_challenge(request, chall_form, creating):
     if chall_form.is_valid():
         chall = chall_form.save(commit=False)
         if creating:
-            chall_slug = slugify(chall.name)
-            nb_same_slug = Challenge.objects.filter(slug=chall_slug).count()
-            if nb_same_slug != 0:
-                chall_slug += '-' + str(nb_same_slug)
-            chall.slug = chall_slug
+            chall.slug = _get_slug(chall.name)
             messages.add_message(request, messages.SUCCESS, "Challenge created. Thanks for your contribution.")
         else:
             messages.add_message(request, messages.SUCCESS, "Challenge updated. Thanks for your contribution.")
@@ -72,13 +83,8 @@ def list_challenges(request: HttpRequest) -> HttpResponse:
             c.nb_points = c.get_nb_points()
     categories = Challenge.CATEGORY_CHOICES
 
-    try:
-        r = requests.get(ctf_settings.url_challenges_state)
-        challenges_states = r.json()
-        logger.info(challenges_states)
-    except Exception:
-        challenges_states = {}
-        logger.exception("Error requesting challenges monitoring")
+    challenges_states = ctf_settings.challenges_states
+    logger.info(challenges_states)
 
     return render(request, 'challenges/list.html', locals())
 
@@ -269,13 +275,7 @@ def admin(request):
     categories = Challenge.CATEGORY_CHOICES
     challs_validated = request.user.teamprofile.validated_challenges
 
-    try:
-        r = requests.get(ctf_settings.url_challenges_state)
-        challenges_states = r.json()
-        logger.info(challenges_states)
-    except Exception:
-        challenges_states = {}
-        logger.exception("Error requesting challenges monitoring")
+    challenges_states = ctf_settings.challenges_states
 
     news = News.objects.all().order_by("-updated_date")
     if request.user.is_staff:
@@ -363,3 +363,110 @@ def end_ctf(request):
     post_news('The CTF is now finished! Congratulations to the participants :). Thanks a lot, it was awesome!')
     messages.add_message(request, messages.SUCCESS, "CTF has ended")
     return redirect(reverse('challenges:admin'))
+
+
+@staff_member_required_basicauth
+@csrf_exempt
+@never_cache
+@require_http_methods(["POST"])
+def bulk_update(request: HttpRequest):
+    try:
+        challenges = json.loads(request.body)
+    except Exception:
+        logger.exception("Couldn't load json")
+        return JsonResponse({"message": "Couldn't load json data"}, status=400)
+
+    try:
+        assert isinstance(challenges, list)
+        assert len(challenges) > 0 and isinstance(challenges[0], dict)
+    except AssertionError:
+        logger.exception("Expected a list of dict, representing the challenges")
+        return JsonResponse({"message": "Expected a list of dict, representing the challenges"}, status=400)
+
+    try:
+        challenge_slugs = {chal["slug"] for chal in challenges}
+        assert len(challenge_slugs) == len(challenges)
+    except (KeyError, AssertionError):
+        return JsonResponse({"message": "`slug` should be present and unique in all challenges"}, status=400)
+
+    for chal in challenges:
+        try:
+            difficulty = chal["difficulty"]
+            name = chal["name"]
+            slug = chal["slug"]
+            description = chal["description"]
+            category = chal["category"]
+            flag = chal["flag"]
+            chall_file = chal["chall_file"]
+            company_logo_url = chal["company_logo_url"]
+            nb_points_override = chal["nb_points_override"]
+        except KeyError:
+            logger.exception("Wrong challenge format")
+            return JsonResponse({"message": """Challenges should be of this form (following documentation may not be up to date): {
+              "difficulty": 0-4 (0 easier, 4 harder),
+              "name": "bla bla" (len<50),
+              "slug": "bla-bla" (extracted from name, identifies the challenge),
+              "description": "Fun story in html",
+              "category": Any of: "MIC", "WEB", "PPC", "FOR", "REV", "PWN", "CRY", "NET",
+              "flag": "INSA{the flag}" (len<=255),
+              "chall_file": null OR "url of the static files for the chal",
+              "company_logo_url": null OR "the URL of the company who wrote the chal, if any",
+              "nb_points_override": integer, if greater then -3, it will override the automagic points calculus 
+            }"""}, status=400)
+
+        try:
+            chal = Challenge.all_objects.get(slug=slug)
+            chal.difficulty = difficulty
+            chal.name = name
+            chal.description = description
+            chal.category = category
+            chal.flag = flag
+            chal.chall_file = chall_file
+            chal.company_logo_url = company_logo_url
+            chal.nb_points_override = nb_points_override
+            chal.full_clean()
+            chal.save()
+        except ObjectDoesNotExist:
+            chal = Challenge(difficulty=difficulty, name=name, description=description, category=category, flag=flag,
+                             chall_file=chall_file, company_logo_url=company_logo_url,
+                             nb_points_override=nb_points_override)
+            chal.full_clean()
+            chal.save()
+        except ValidationError as e:
+            logger.exception("Wrong challenge format")
+            return JsonResponse({"message": "Challenge `{}` doesn't have the right form: {}".format(name, e)},
+                                status=400)
+        except Exception:
+            logger.exception("Exception creating the challenge")
+            return JsonResponse({"message": "Error while updating {}, please check the server logs".format(name)},
+                                status=500)
+
+    Challenge.all_objects.exclude(slug__in=challenge_slugs).delete()
+    return JsonResponse({"message": "OK"}, status=200)
+
+
+@staff_member_required_basicauth
+@csrf_exempt
+@never_cache
+@require_http_methods(["POST"])
+def push_challenges_status(request: HttpRequest):
+    # $ curl http://127.0.0.1:8000/challenges/statuses/ -u adminctf -d '{"chal-slug1": true, "chal-slug2": false}'
+    try:
+        challenge_states = json.loads(request.body)
+    except Exception:
+        logger.exception("Couldn't load json")
+        return JsonResponse({"message": "Couldn't load json data"}, status=400)
+
+    try:
+        assert isinstance(challenge_states, dict)
+        assert len(challenge_states) > 0
+    except AssertionError:
+        logger.exception("Expected a dict, {'chal-slug' -> bool (true if up, false if down)}")
+        return JsonResponse({"message": "Expected a dict, {'chal-slug' -> bool (true if up, false if down)}"}, status=400)
+
+    ctf_settings = CTFSettings.objects.first()
+    ctf_settings.challenges_states_json = json.dumps(challenge_states)
+    ctf_settings.challenges_states_updated_at = timezone.now()
+    ctf_settings.save()
+
+    return JsonResponse({"message": "OK"}, status=200)

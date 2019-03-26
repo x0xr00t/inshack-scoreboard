@@ -22,6 +22,10 @@ urlpatterns = [
     url(r'^add_challenge/$', views.add_challenge, name='add'),
     # /challenges/update/[slug]/
     url(r'^update/(?P<slug>[\w-]+)/$', views.update_challenge, name='update'),
+    # /challenges/bulk-update/
+    url(r'^bulk-update/$', views.bulk_update, name='bulk_update'),
+    # /challenges/statuses/
+    url(r'^statuses/$', views.push_challenges_status, name='push_challenges_status'),
     # /challenges/delete/[slug]/
     url(r'^delete/(?P<slug>[\w-]+)/$', views.delete_challenge, name='delete'),
     # /challenges/admin/
