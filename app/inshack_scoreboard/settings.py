@@ -122,6 +122,11 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
         },
+        'django.template': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
     },
 }
 
@@ -160,3 +165,4 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = "DENY"
+SESSION_COOKIE_SECURE = not DEBUG

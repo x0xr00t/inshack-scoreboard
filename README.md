@@ -4,12 +4,14 @@ A Django scoreboard for CTF
 ## Setup the DB on a separate server
 
 ```bash
+$ mkdir scorebaord_dev_data
 $ docker run -it --rm -p 3306:3306 \
   --name scoreboard_db \
   -e MYSQL_DATABASE=inshack \
   -e MYSQL_USER=inshack \
   -e MYSQL_PASSWORD=password \
   -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
+  -v $(pwd)/scoreboard_my_data/:/var/lib/mysql \
   mysql:5.7
 ```
 
@@ -56,5 +58,6 @@ $ docker run -d --restart unless-stopped \
          -e db_user=inshack \
          -e db_password=password \
          -e db_host=1.2.3.4 \
+         -e PRIVATE_KEY=CHANGE_ME \
          registry.insecurity-insa.fr/insecurity/scoreboard
 ```

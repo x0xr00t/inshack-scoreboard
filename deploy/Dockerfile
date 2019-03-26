@@ -26,7 +26,7 @@ RUN cd inshack-scoreboard && python3 manage.py collectstatic --noinput
 
 EXPOSE 8081
 
-CMD sed -i -e "s/{{HOST}}/$db_host/" -e "s/{{USER}}/$db_user/" -e "s/{{PASSWORD}}/$db_password/" /etc/supervisor/conf.d/gunicorn.conf && \
+CMD sed -i -e "s/{{HOST}}/$db_host/" -e "s/{{USER}}/$db_user/" -e "s/{{PASSWORD}}/$db_password/" -e "s/{{SECRET_KEY}}/$SECRET_KEY/" /etc/supervisor/conf.d/gunicorn.conf && \
     service supervisor start && \
     service nginx restart && \
     bash -c "tail -f {/var/log/nginx/scoreboard.*.log,/home/scoreboard/logs/error,/home/scoreboard/logs/access}"
