@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from information import views
 
@@ -32,3 +33,6 @@ urlpatterns = [
     # /admin/*
     url(r'^admin/', admin.site.urls),
 ]
+
+# Adds /static urls for development purposes (only when settings.DEBUG is True)
+urlpatterns += staticfiles_urlpatterns()

@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # FIXME
 SECRET_KEY = os.getenv('SECRET_KEY', 'PLEASE_PLEASE_CHANGE_ME')
 
-DEBUG = False
+DEBUG = os.getenv('DEV', '0') == '1'
 
 ALLOWED_HOSTS = ["ctf.insecurity-insa.fr", "127.0.0.1", "localhost"]
 
