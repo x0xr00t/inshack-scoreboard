@@ -139,9 +139,9 @@ USE_L10N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
+# https://docs.djangoproject.com/en/dev/howto/static-files/
 
-STATIC_ROOT = "/var/www/inshack-static/static/"
+STATIC_ROOT = "/srv/web/static/"
 STATIC_URL = '/static/'
 LOGIN_URL = '/team/login/'
 
