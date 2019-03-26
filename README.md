@@ -10,11 +10,12 @@ docker build -t registry.insecurity-insa.fr/insecurity/scoreboard -f deploy/Dock
 ## Setup the DB on a separate server
 
 ```bash
-$ mysql -uroot -p
-mysql> CRATE DATABASE inshack;
-mysql> CREATE USER 'inshack'@'localhost' IDENTIFIED BY 'password';
-mysql> GRANT ALL PRIVILEGES ON inshack.* TO 'inshack'@'localhost';
-mysql> exit
+$ docker run -it --rm -p 3306:3306 \
+  -e MYSQL_DATABASE=inshack \
+  -e MYSQL_USER=inshack \
+  -e MYSQL_PASSWORD=password \
+  -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
+  mysql:5.7
 ```
 
 Modify *inshack_scoreboard/settings.py* accordingly. Then launch the migrations on the mysql host:
@@ -37,11 +38,5 @@ CTFSettings.objects.create(url_challenges_state='http://IP_OF_CHALLENGE_MONITORI
 ## Run
 
 ```bash
-docker run --rm -it --cpu-period="100000" --cpu-quota="95000" --name scoreboard -p 80:8081 registry.insecurity-insa.fr/insecurity/scoreboard
-```
-
-## Login as root
-
-```bash
-docker exec -u 0 -it scoreboard bash
+docker run --rm -it --name scoreboard -p 80:8081 registry.insecurity-insa.fr/insecurity/scoreboard
 ```
