@@ -58,6 +58,6 @@ $ docker run -d --restart unless-stopped \
          -e db_user=inshack \
          -e db_password=password \
          -e db_host=1.2.3.4 \
-         -e PRIVATE_KEY=CHANGE_ME \
+         -e SECRET_KEY=CHANGE_ME \
          registry.insecurity-insa.fr/insecurity/scoreboard
 ```
