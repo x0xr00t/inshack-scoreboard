@@ -371,7 +371,8 @@ def end_ctf(request):
 @require_http_methods(["POST"])
 def bulk_update(request: HttpRequest):
     try:
-        challenges = json.loads(request.body)
+        challenges_data = json.loads(request.body)
+        challenges = challenges_data["challenges"]
     except Exception:
         logger.exception("Couldn't load json")
         return JsonResponse({"message": "Couldn't load json data"}, status=400)
