@@ -160,8 +160,8 @@
                                                 <p>
                                                     {{ chall.description|safe }}
                                                 </p>
-                                                {% if chall.chall_file %}
-                                                    <a href="{{ chall.chall_file }}"
+                                                {% if chall.static_url %}
+                                                    <a href="{{ chall.static_url }}"
                                                        class="btn btn-sm btn-blue-grey" target="_blank" download><i
                                                             class="fa fa-file-archive-o"></i>&nbsp;&nbsp;&nbsp;&nbsp;Challenge's
                                                         file</a>

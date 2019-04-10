@@ -11,7 +11,7 @@ $ docker run -it --rm -p 3306:3306 \
   -e MYSQL_USER=inshack \
   -e MYSQL_PASSWORD=password \
   -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
-  -v $(pwd)/scoreboard_my_data/:/var/lib/mysql \
+  -v $(pwd)/scorebaord_dev_data/:/var/lib/mysql \
   mysql:5.7
 ```
 

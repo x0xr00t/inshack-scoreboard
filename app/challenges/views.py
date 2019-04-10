@@ -397,7 +397,7 @@ def bulk_update(request: HttpRequest):
             description = chal["description"]
             category = chal["category"]
             flag = chal["flag"]
-            chall_file = chal["chall_file"]
+            static_url = chal["static_url"]
             company_logo_url = chal["company_logo_url"]
             nb_points_override = chal["nb_points_override"]
         except KeyError:
@@ -409,7 +409,7 @@ def bulk_update(request: HttpRequest):
               "description": "Fun story in html",
               "category": Any of: "MIC", "WEB", "PPC", "FOR", "REV", "PWN", "CRY", "NET",
               "flag": "INSA{the flag}" (len<=255),
-              "chall_file": null OR "url of the static files for the chal",
+              "static_url": null OR "url of the static files for the chal",
               "company_logo_url": null OR "the URL of the company who wrote the chal, if any",
               "nb_points_override": integer, if greater then -3, it will override the automagic points calculus 
             }"""}, status=400)
@@ -421,14 +421,14 @@ def bulk_update(request: HttpRequest):
             chal.description = description
             chal.category = category
             chal.flag = flag
-            chal.chall_file = chall_file
+            chal.static_url = static_url
             chal.company_logo_url = company_logo_url
             chal.nb_points_override = nb_points_override
             chal.full_clean()
             chal.save()
         except ObjectDoesNotExist:
             chal = Challenge(difficulty=difficulty, name=name, description=description, category=category, flag=flag,
-                             chall_file=chall_file, company_logo_url=company_logo_url,
+                             static_url=static_url, company_logo_url=company_logo_url,
                              nb_points_override=nb_points_override)
             chal.full_clean()
             chal.save()

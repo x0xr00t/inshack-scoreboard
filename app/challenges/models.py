@@ -117,7 +117,7 @@ class Challenge(models.Model):
     # is chall visible by everyone ?
     is_enabled = models.BooleanField(default=False)
     # file (or archive) of the chall
-    chall_file = models.URLField(blank=True, null=True)
+    static_url = models.URLField(blank=True, null=True)
     # is the chall written by a company?
     company_logo_url = models.URLField(blank=True, null=True)
     # if > -3, will override the automagic points calculus
