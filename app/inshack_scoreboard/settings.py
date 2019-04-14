@@ -24,7 +24,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'PLEASE_PLEASE_CHANGE_ME')
 
 DEBUG = os.getenv('DEV', '0') == '1'
 
-ALLOWED_HOSTS = ["ctf.insecurity-insa.fr", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = [os.getenv("ALLOWED_HOST", "ctf.insecurity-insa.fr"), "127.0.0.1", "localhost"]
 
 # Application definition
 
