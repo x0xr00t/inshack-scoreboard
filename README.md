@@ -61,5 +61,6 @@ $ docker run -d --restart unless-stopped \
          -e db_password=password \
          -e db_host=1.2.3.4 \
          -e SECRET_KEY=CHANGE_ME \
+         -e ALLOWED_HOST=scoreboard.example.com \
          registry.insecurity-insa.fr/insecurity/scoreboard
 ```
