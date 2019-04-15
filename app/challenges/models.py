@@ -173,3 +173,12 @@ class TeamFlagChall(models.Model):
 
     def __str__(self):
         return str(self.flagger) + " flagged " + str(self.chall)
+
+
+class TeamTriedChall(models.Model):
+    flagger = models.ForeignKey(TeamProfile, on_delete=models.CASCADE)
+    chall = models.ForeignKey(Challenge, on_delete=models.CASCADE)
+    flag_fail = models.TextField(max_length=255)
+
+    def __str__(self):
+        return str(self.flagger) + " tried " + str(self.chall) + " with " + self.flag_fail

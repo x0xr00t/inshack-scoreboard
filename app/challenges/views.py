@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.utils import timezone
 
 from challenges.decorators import staff_member_required_basicauth
-from challenges.models import Challenge, CTFSettings, TeamFlagChall
+from challenges.models import Challenge, CTFSettings, TeamFlagChall, TeamTriedChall
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
@@ -133,8 +133,10 @@ def validate(request: HttpRequest, chall_id: int) -> JsonResponse:
                     except Exception:
                         logger.exception("An error occurred while trying to flag a chall: ")
             else:
-                with open("/srv/web/flags", "a") as f:
-                    f.write("Team '" + team.username + "' tried : '" + flag + "'\n")
+                try:
+                    TeamTriedChall(flagger=team_profile, chall=challenge, flag_fail=flag).save()
+                except Exception:
+                    logger.exception("Error registering fail flag attempt")
                 message = "Sorry it's not the correct flag. Try harder."
     return JsonResponse({"message": message, "error": error})
 
@@ -441,10 +443,11 @@ def bulk_update(request: HttpRequest):
             return JsonResponse(
                     {"message": "Challenge `{}` doesn't have the right form: {}.\n{}".format(name, e, expected_data)},
                     status=400)
-        except Exception:
+        except Exception as e:
             logger.exception("Exception creating the challenge")
             return JsonResponse(
-                    {"message": "Error while updating {}, please check the serverlogs.\nFor reference: {}".format(name, expected_data)},
+                    {"message": "Error while updating {}, please check the serverlogs. err: {}"
+                                "\nFor reference: {}".format(name, e, expected_data)},
                     status=500)
 
     Challenge.all_objects.exclude(slug__in=challenge_slugs).delete()
