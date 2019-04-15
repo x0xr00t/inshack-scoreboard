@@ -1,3 +1,4 @@
+import json
 import logging
 
 from challenges.models import CTFSettings, Challenge
@@ -55,6 +56,7 @@ def create_or_update_team(request: HttpRequest, team_form: UserForm, team_profil
                 t = authenticate(username=team.username, password=team_form.cleaned_data['password'])
                 if t is not None:
                     login(request, t)
+                    log_team_ip(request, t)
             else:
                 messages.add_message(request, messages.SUCCESS, 'Your team has been updated.')
             return redirect(reverse('team:profile'))
@@ -125,10 +127,24 @@ def login_user(request: HttpRequest) -> HttpResponse:
             else:
                 login(request, team)
                 messages.add_message(request, messages.SUCCESS, "You've been successfully logged in.")
+                log_team_ip(request, team)
                 return redirect(request.GET.get('next', reverse('team:profile')))
     else:
         login_form = LoginForm()
     return render(request, 'user_manager/login.html', locals())
+
+
+def log_team_ip(request, team):
+    try:
+        if team.teamprofile:
+            ip = request.META["HTTP_X_FORWARDED_FOR"]
+            if ip:
+                ips = json.loads(team.teamprofile.ips)
+                ips[ip] = True
+                team.teamprofile.ips = json.dumps(ips)
+                team.teamprofile.save()
+    except Exception:
+        logger.exception("Error logging user's IP address")
 
 
 @login_required

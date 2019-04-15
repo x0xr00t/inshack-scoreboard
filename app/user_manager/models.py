@@ -31,6 +31,9 @@ class TeamProfile(models.Model):
     # is the team playing on site ?
     on_site = models.BooleanField(default=False)
 
+    # team's IP addresses
+    ips = models.TextField(default="{}")
+
     def __str__(self) -> str:
         return str(self.team)
 
