@@ -474,7 +474,9 @@ def push_challenges_status(request: HttpRequest):
         return JsonResponse({"message": "Expected a dict, {'chal-slug' -> bool (true if up, false if down)}"}, status=400)
 
     ctf_settings = CTFSettings.objects.first()
-    ctf_settings.challenges_states_json = json.dumps(challenge_states)
+    new_challenge_states = json.loads(ctf_settings.challenges_states_json)
+    new_challenge_states.update(challenge_states)
+    ctf_settings.challenges_states_json = json.dumps(new_challenge_states)
     ctf_settings.challenges_states_updated_at = timezone.now()
     ctf_settings.save()
 
