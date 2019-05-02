@@ -108,12 +108,7 @@ class Challenge(models.Model):
     flaggers = models.ManyToManyField(TeamProfile, through='TeamFlagChall', blank=True,
                                       related_name='validated_challenges')
     # chall's flag
-    flag = models.CharField(max_length=255, validators=[
-        RegexValidator(
-            regex=r'^INSA{.*}$',
-            message='Flag should be in the form ^INSA{.*}$',
-        ),
-    ])
+    flag = models.CharField(max_length=255)
     # is chall visible by everyone ?
     is_enabled = models.BooleanField(default=False)
     # file (or archive) of the chall
